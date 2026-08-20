@@ -9,6 +9,7 @@ import {
 } from "@/utils/jwt";
 import { env } from "@/config/env";
 import { OtpPurpose } from "@prisma/client";
+import { sendOtpEmail } from "@/utils/email";
 
 interface RegisterInput {
   fullName: string;
@@ -101,7 +102,7 @@ export const authService = {
   async sendOtp(email: string, purpose: "register" | "reset") {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user && purpose === "reset") {
-      // Don't reveal whether the email exists for password resets.
+      // Don't reveal whether the email exists
       return;
     }
     if (!user) throw new AppError("User not found", 404);
@@ -117,13 +118,15 @@ export const authService = {
       },
     });
 
-    // In production this would call an SMS/email provider.
-    // Logged here so the flow is testable end-to-end without one.
-    console.log(`[OTP] ${email} (${purpose}): ${code}`);
+    try {
+      await sendOtpEmail(email, code, purpose);
+    } catch (err) {
+      console.error("[EMAIL] Failed to send OTP:", err);
+      console.log(`[OTP-FALLBACK] ${email} (${purpose}): ${code}`);
+    }
 
     return { expiresInMinutes: env.otpExpiresInMinutes };
   },
-
   async verifyOtp(email: string, code: string, purpose: "register" | "reset") {
     const otp = await prisma.otp.findFirst({
       where: {
