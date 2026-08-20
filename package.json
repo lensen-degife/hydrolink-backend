@@ -25,6 +25,7 @@
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+    "nodemailer": "^9.0.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -34,11 +35,12 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.14.15",
+    "@types/nodemailer": "^8.0.1",
     "nodemon": "^3.1.4",
     "prisma": "^5.19.0",
+    "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
-    "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   }
 }
